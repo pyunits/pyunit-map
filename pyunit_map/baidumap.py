@@ -25,7 +25,8 @@ class BaiDuMap:
             'OpYA7uSs7czqHw68w07ZzE9t08RQWrfO',
             'Tffez86k4u6rwGmE3MPR2N3XtUUNbZ7H',
             'rINxBQe6h4OGbmrLiImffAj96ZlhxCY8',
-            'V6QYkOxaGwvU3WDVZKBdNUVjVvLcwQpH'
+            'V6QYkOxaGwvU3WDVZKBdNUVjVvLcwQpH',
+            'PKxVRcebGuDL4QsTtzFNMlCZ2rpfN3TG'
         ]
         self.title = title
         self.scope = scope
