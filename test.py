@@ -5,13 +5,15 @@
 from pyunit_map import BaiDuMap, province
 
 
-def test_only():
+def only():
     """测试单一"""
     bd = BaiDuMap('健身房', '贵阳市')
-    bd.save_execl('健身房')
+    # bd.save_execl('健身房')
+    print(bd.json)
+    print(bd.total_data)
 
 
-def test_multiple():
+def multiple():
     """测试多一地址"""
     bd = BaiDuMap()
     for p in province.GuiZhou:
@@ -20,5 +22,5 @@ def test_multiple():
 
 
 if __name__ == '__main__':
-    # test_only()
-    test_multiple()
+    only()
+    # multiple()

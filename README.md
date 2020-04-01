@@ -13,7 +13,9 @@
 from pyunit_map import BaiDuMap
 if __name__ == '__main__':
     bd = BaiDuMap('景区', '黔东南苗族侗族自治州')
-    bd.save_execl('./景区') #保存execl文件
+    # bd.save_execl('./景区') #保存execl文件
+    print(bd.json) # 打印json格式
+    print(bd.total_data) # 打印整理的所有数据
 ```
 
 ### 下载某一个省下面所有的景区,比如贵州省
@@ -23,7 +25,7 @@ if __name__ == '__main__':
     bd=BaiDuMap()
     for gz in province.GuiZhou:
         bd.update_title('景区', gz)
-    bd.save_execl('贵州下所有的景区')
+    bd.save_execl('./贵州下所有的景区')
 ```
 
 ### 文本结果

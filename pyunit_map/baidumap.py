@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # @Time  : 2019/3/14 9:06
 # @Author: Jtyoui@qq.com
-import requests
-from random import choice
 from math import ceil
 import pandas as pd
+import randomak
 
 
 class BaiDuMap:
@@ -19,18 +18,10 @@ class BaiDuMap:
         :param page_size: 返回一条是数据,默认是20,最大是20
         :param page_num: 页数
         """
-        self.AK = [
-            '8R82NkA5j2YzCO1hG2grXUxdLQnnHdVA',
-            'mSYhaXLLGXffSkkgkalK84RV0Aof22vA',
-            'OpYA7uSs7czqHw68w07ZzE9t08RQWrfO',
-            'Tffez86k4u6rwGmE3MPR2N3XtUUNbZ7H',
-            'rINxBQe6h4OGbmrLiImffAj96ZlhxCY8',
-            'V6QYkOxaGwvU3WDVZKBdNUVjVvLcwQpH',
-            'PKxVRcebGuDL4QsTtzFNMlCZ2rpfN3TG'
-        ]
         self.title = title
         self.scope = scope
-        self._total_data = []
+        self.total_data = []
+        self.json = []
         if title and scope:
             self._get_data(page_size, page_num)
 
@@ -53,9 +44,7 @@ class BaiDuMap:
         :param page_num: 页数
         :return: 主题信息集合
         """
-        ak = choice(self.AK)  # 随机选取一个Ak值.AK要在百度接口上获取
-        url = f'http://api.map.baidu.com/place/v2/search?query={self.title}&region={self.scope}&output=json&ak={ak}&page_size={page_size}&page_num={page_num}'
-        json = requests.get(url).json()
+        json = randomak.get_json(self.title, self.scope, page_size, page_num)
         status = json.get('status')
         if status == 401:
             self._get_data(page_num=page_num)
@@ -71,10 +60,18 @@ class BaiDuMap:
             locations = result['location']
             location = str(locations['lng']) + '|' + str(locations['lat'])
             address = result.get('province') + result.get('city') + result.get('area') + result.get('address')
-            self._total_data.append((name, location, address))
+            if (self.scope not in address) and self.json == []:  # 获取地址不属于自己设置的地址
+                if self.scope and (self.scope not in self.title):
+                    self.title = self.scope + self.title
+                else:
+                    self.title = self.title
+                self._get_data(page_size, page_num)
+            else:
+                self.total_data.append((name, location, address))
+                self.json.append(json)
+
         if current_page < page:
             self._get_data(page_num=current_page)
-        print(json)
 
     def save_txt(self, file_name):
         """保存到纯文本
@@ -82,13 +79,13 @@ class BaiDuMap:
         :param file_name: txt文件地址
         """
         with open(file_name, encoding='utf-8', mode='a') as f:
-            for name, location, address in self._total_data:
+            for name, location, address in self.total_data:
                 f.write(f'名字:{name}\t经纬度:{location}\t地址:{address}\n')
 
     def get_pandas(self):
         """获得DataFrame类型"""
         names, loc, addr = [], [], []
-        for name, location, address in self._total_data:
+        for name, location, address in self.total_data:
             names.append(name)
             loc.append(location)
             addr.append(address)
@@ -106,7 +103,4 @@ class BaiDuMap:
 
     def get_name(self):
         """获取实体名字"""
-        names = []
-        for name in self._total_data:
-            names.append(name[0])
-        return names
+        return [name[0] for name in self.total_data]
