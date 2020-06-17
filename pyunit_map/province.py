@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # @Time  : 2019/3/14 17:59
 # @Author: Jtyoui@qq.com
-
 Municipality_Directly_Under_The_Central_Government = ['北京市', '上海市', '天津市', '重庆市']  # 直辖市
 
 # 安徽

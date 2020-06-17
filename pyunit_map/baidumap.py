@@ -3,7 +3,7 @@
 # @Time  : 2019/3/14 9:06
 # @Author: Jtyoui@qq.com
 from math import ceil
-import pandas as pd
+
 import randomak
 
 
@@ -14,7 +14,7 @@ class BaiDuMap:
         """初始化
 
         :param title: 实体主题
-        :param scope: 地址范围
+        :param scope: 地址范围:必须具体到市区
         :param page_size: 返回一条是数据,默认是20,最大是20
         :param page_num: 页数
         """
@@ -80,26 +80,20 @@ class BaiDuMap:
         """
         with open(file_name, encoding='utf-8', mode='a') as f:
             for name, location, address in self.total_data:
-                f.write(f'名字:{name}\t经纬度:{location}\t地址:{address}\n')
+                longitude = location.split('|')
+                f.write(f'名字:{name}\t经度:{longitude[0]}\t纬度:{longitude[1]}\t地址:{address}\n')
 
     def get_pandas(self):
         """获得DataFrame类型"""
-        names, loc, addr = [], [], []
+        names, longitude, latitude, addr = [], [], [], []
         for name, location, address in self.total_data:
             names.append(name)
-            loc.append(location)
+            lg = location.split('|')
+            longitude.append(lg[0])
+            latitude.append(lg[1])
             addr.append(address)
-        writer = pd.DataFrame({'名字': names, '经纬度': loc, '地址': addr})
+        writer = {'名字': names, '经度': longitude, '纬度': latitude, '地址': addr}
         return writer
-
-    def save_execl(self, file_name: str):
-        """保存到execl文件
-
-        :param file_name: execl文件地址
-        """
-        writer = self.get_pandas()
-        file_name = file_name + '.xlsx' if file_name.find('.') == -1 else file_name
-        writer.to_excel(file_name, index=False)
 
     def get_name(self):
         """获取实体名字"""
